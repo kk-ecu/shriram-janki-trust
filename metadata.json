@@ -1,0 +1,6 @@
+{
+  "name": "Shri Ram Janki Mandir & Charitable Trust",
+  "description": "Official temple portal of Shri Ram Janki Mandir for daily darshan, aarti timings, sacred seva offerings, and 80G tax exemption certificates.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

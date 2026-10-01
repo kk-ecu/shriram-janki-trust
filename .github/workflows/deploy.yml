@@ -1,0 +1,46 @@
+name: Deploy Temple Website to Hostinger
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: ⚙️ Setup Node.js Runtime
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install Dependencies
+        run: npm ci
+
+      - name: 🛠️ Build Production Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: 🚀 Deploy via SSH to Hostinger VPS / Cloud
+        uses: appleboy/ssh-action@v1.0.3
+        if: ${{ env.HOSTINGER_SSH_HOST != '' }}
+        env:
+          HOSTINGER_SSH_HOST: ${{ secrets.HOSTINGER_SSH_HOST }}
+        with:
+          host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          username: ${{ secrets.HOSTINGER_SSH_USER }}
+          key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          port: 22
+          script: |
+            cd /var/www/temple-website || exit 1
+            git pull origin main
+            npm ci --production
+            npm run build
+            pm2 restart temple-portal || pm2 start dist/server.cjs --name "temple-portal"
+            echo "✅ Mandir portal updated successfully on Hostinger!"
