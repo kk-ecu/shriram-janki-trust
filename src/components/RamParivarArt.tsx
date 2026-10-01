@@ -333,21 +333,187 @@ export const RamParivarHeroVisual: React.FC<{
 };
 
 /**
- * Universal background watermark motif featuring Shri Ram's Kodanda bow and lotus
+ * Universal background watermark motif featuring Bhagwan Shri Ram's sacred picture
+ * Elegantly visible across all pages, ensuring Lord Ram's divine presence is always seen.
  */
-export const RamWatermarkBg: React.FC = () => {
+export const RamWatermarkBg: React.FC<{
+  intensity?: 'subtle' | 'normal' | 'vivid';
+}> = ({ intensity = 'normal' }) => {
+  const opacityClass =
+    intensity === 'subtle'
+      ? 'opacity-[0.08]'
+      : intensity === 'vivid'
+      ? 'opacity-[0.25]'
+      : 'opacity-[0.16]';
+
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-[0.035]">
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px]">
-        <svg viewBox="0 0 400 400" className="w-full h-full text-amber-900 fill-current">
-          <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="10 10" />
+    <div
+      className={`fixed inset-0 pointer-events-none z-0 overflow-hidden transition-opacity duration-700 ${opacityClass}`}
+      aria-hidden="true"
+    >
+      {/* Background Divine Portrait of Bhagwan Shri Ram */}
+      <div className="absolute top-12 right-0 sm:right-6 md:right-12 w-[340px] sm:w-[480px] md:w-[620px] h-[520px] sm:h-[680px] md:h-[840px] rounded-3xl overflow-hidden mix-blend-multiply filter contrast-125">
+        <img
+          src={RAM_PARIVAR_IMAGES.lordRam}
+          alt=""
+          className="w-full h-full object-cover object-top mask-radial"
+          style={{
+            maskImage: 'radial-gradient(circle at 50% 40%, black 50%, transparent 85%)',
+            WebkitMaskImage: 'radial-gradient(circle at 50% 40%, black 50%, transparent 85%)',
+          }}
+        />
+      </div>
+
+      {/* Symmetrical Left Motif: Sacred Kodanda Bow & Sun Halo */}
+      <div className="hidden lg:block absolute top-1/3 left-6 w-[360px] h-[360px]">
+        <svg viewBox="0 0 400 400" className="w-full h-full text-amber-900 fill-current opacity-70">
+          <circle cx="200" cy="200" r="180" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="10 10" />
           <circle cx="200" cy="200" r="140" fill="none" stroke="currentColor" strokeWidth="2" />
-          <path d="M 200 40 Q 120 200 200 360" fill="none" stroke="currentColor" strokeWidth="6" />
+          <path d="M 200 40 Q 120 200 200 360" fill="none" stroke="currentColor" strokeWidth="5" />
           <line x1="200" y1="40" x2="200" y2="360" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" />
-          <line x1="160" y1="200" x2="340" y2="200" stroke="currentColor" strokeWidth="5" />
+          <line x1="160" y1="200" x2="340" y2="200" stroke="currentColor" strokeWidth="4" />
           <polygon points="340,200 325,190 325,210" />
-          <text x="200" y="210" textAnchor="middle" fontSize="38" fontFamily="serif" fontWeight="bold">राम</text>
+          <text x="200" y="212" textAnchor="middle" fontSize="32" fontFamily="serif" fontWeight="bold">श्री राम</text>
         </svg>
+      </div>
+
+      {/* Sacred Mantra Watermark Ribbon in Sanskrit */}
+      <div className="absolute bottom-6 left-0 right-0 text-center font-serif text-amber-950 font-bold tracking-[0.3em] text-xs sm:text-sm select-none">
+        ॥ मर्यादा पुरुषोत्तम भगवान श्री रामचन्द्राय नमः • सियावर रामचंद्र की जय ॥
+      </div>
+    </div>
+  );
+};
+
+/**
+ * High-definition Lightbox Darshan Modal for Bhagwan Shri Ram
+ */
+export const LordRamDarshanLightbox: React.FC<{
+  isOpen: boolean;
+  onClose: () => void;
+  onExploreAbout?: () => void;
+}> = ({ isOpen, onClose, onExploreAbout }) => {
+  const [flowerCount, setFlowerCount] = useState(0);
+  const [showFlowerAnimation, setShowFlowerAnimation] = useState(false);
+
+  if (!isOpen) return null;
+
+  const handleOfferFlower = () => {
+    setFlowerCount((prev) => prev + 1);
+    setShowFlowerAnimation(true);
+    setTimeout(() => setShowFlowerAnimation(false), 1200);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/85 backdrop-blur-md animate-fadeIn">
+      <div className="relative w-full max-w-4xl bg-stone-950 text-white rounded-3xl overflow-hidden border-2 border-amber-400 shadow-2xl max-h-[92vh] flex flex-col">
+        {/* Top Header */}
+        <div className="px-5 py-3.5 bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 border-b border-amber-500/40 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🏹</span>
+            <div>
+              <h3 className="font-serif-title font-bold text-base sm:text-lg text-amber-300">
+                साक्षात प्रभु श्री राम दर्शन • Sacred Darshan
+              </h3>
+              <p className="text-[11px] text-stone-300">
+                Bhagwan Maryada Purushottam Shri Ramchandra
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-stone-800 hover:bg-stone-700 text-stone-300 hover:text-white flex items-center justify-center transition"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Content Body */}
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+            {/* High-res Image of Lord Ram */}
+            <div className="md:col-span-6 relative rounded-2xl overflow-hidden border-2 border-amber-400/80 shadow-2xl bg-black max-h-[460px] flex items-center justify-center">
+              <img
+                src={RAM_PARIVAR_IMAGES.lordRam}
+                alt="Bhagwan Shri Ram with Kodanda Bow and Peetambar"
+                className="w-full h-full object-contain max-h-[450px]"
+              />
+              {/* Divine Aura overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+
+              {/* Flower Offering Animation */}
+              {showFlowerAnimation && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none animate-bounce">
+                  <span className="text-6xl filter drop-shadow-lg">🌺 🌸 🌼</span>
+                </div>
+              )}
+
+              <div className="absolute bottom-3 left-3 right-3 text-center bg-stone-950/80 backdrop-blur-xs p-2.5 rounded-xl border border-amber-400/40">
+                <span className="text-amber-300 font-serif font-bold text-xs sm:text-sm">
+                  ॥ श्री राम जय राम जय जय राम ॥
+                </span>
+              </div>
+            </div>
+
+            {/* Devotional Text & Glories of Lord Ram */}
+            <div className="md:col-span-6 space-y-3.5">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-semibold">
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+                <span>Maryada Purushottam • मर्यादा पुरुषोत्तम</span>
+              </div>
+
+              <h4 className="text-2xl font-serif-title font-extrabold text-white">
+                Bhagwan Shri Ram
+              </h4>
+
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                Prabhu Shri Ram is the supreme manifestation of righteousness, filial duty, and unblemished character. Armed with His unconquerable <strong>Kodanda bow</strong>, He protects Dharma and bestows auspiciousness upon all devotees.
+              </p>
+
+              {/* Ram Raksha Shloka */}
+              <div className="p-3.5 rounded-xl bg-amber-950/60 border border-amber-500/40 text-amber-200 font-serif text-xs leading-relaxed space-y-1">
+                <div className="font-bold text-amber-300">॥ राम रक्षा मन्त्र ॥</div>
+                <div>आपदामपहर्तारं दातारं सर्वसम्पदाम् ।</div>
+                <div>लोकाभिरामं श्रीरामं भूयो भूयो नमाम्यहम् ॥</div>
+              </div>
+
+              {/* Interactive Virtual Pushpanjali Flower Offering */}
+              <div className="p-3 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-stone-200">
+                    Offer Virtual Flowers (पुष्पांजलि)
+                  </div>
+                  <div className="text-[11px] text-amber-400 font-medium">
+                    {flowerCount > 0
+                      ? `${flowerCount} Sacred Flowers Offered to Prabhu Ram`
+                      : 'Click to offer Pushpanjali'}
+                  </div>
+                </div>
+                <button
+                  onClick={handleOfferFlower}
+                  className="px-3.5 py-1.5 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5"
+                >
+                  <span>🌸</span>
+                  <span>Offer Flower</span>
+                </button>
+              </div>
+
+              {/* Navigation button to explore more about Lord Ram */}
+              {onExploreAbout && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onExploreAbout();
+                  }}
+                  className="w-full py-2.5 bg-amber-900/60 hover:bg-amber-800 text-amber-200 hover:text-white border border-amber-400/50 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2"
+                >
+                  <span>Read Complete Life &amp; Leela of Bhagwan Shri Ram</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

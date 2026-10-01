@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, ShieldCheck, Flame, ArrowRight, Play, AlertCircle, Sparkles, Heart } from 'lucide-react';
 import { TEMPLE_INFO } from '../data/mockData';
-import { RamParivarHeroVisual } from './RamParivarArt';
+import { RamParivarHeroVisual, RAM_PARIVAR_IMAGES, LordRamDarshanLightbox } from './RamParivarArt';
 import { DonationModuleSettings } from '../data/donationSettings';
 
 interface HeroProps {
@@ -28,21 +28,98 @@ export const Hero: React.FC<HeroProps> = ({
   donationSettings,
 }) => {
   const isDonationActive = donationSettings ? donationSettings.isEnabled : false;
+  const [bgIntensity, setBgIntensity] = useState<'vivid' | 'warm' | 'subtle'>('warm');
+  const [isDarshanOpen, setIsDarshanOpen] = useState(false);
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-amber-50/80 via-orange-50/40 to-[#FFFDF9] pt-6 pb-12 border-b border-amber-200/80">
-      {/* Subtle traditional sacred Ram watermark in background */}
-      <div className="absolute inset-0 pointer-events-none opacity-5 flex items-center justify-center">
-        <div className="w-[640px] h-[640px] rounded-full border-[36px] border-amber-800 border-dashed animate-spin-slow" />
+      {/* Consecrated Bhagwan Shri Ram Divine Background Picture */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none" aria-hidden="true">
+        {/* Lord Ram Background Portrait */}
+        <div
+          className={`absolute inset-0 bg-contain sm:bg-cover bg-center md:bg-right bg-no-repeat transition-all duration-700 ${
+            bgIntensity === 'vivid'
+              ? 'opacity-40 scale-100'
+              : bgIntensity === 'warm'
+              ? 'opacity-25 scale-100'
+              : 'opacity-14 scale-98'
+          }`}
+          style={{
+            backgroundImage: `url('${RAM_PARIVAR_IMAGES.lordRam}')`,
+            filter: 'contrast(1.1) saturate(1.15)',
+          }}
+        />
+
+        {/* Ambient Golden & Amber Temple Sunbeam Overlays for devotional warmth & text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-50/85 via-orange-50/70 to-[#FFFDF9]/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-300/35 via-transparent to-stone-900/10" />
+
+        {/* Sun Halo radiating from upper center */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[700px] bg-amber-400/20 rounded-full blur-3xl pointer-events-none" />
       </div>
 
+      {/* Lightbox Modal for Bhagwan Shri Ram Darshan */}
+      <LordRamDarshanLightbox
+        isOpen={isDarshanOpen}
+        onClose={() => setIsDarshanOpen(false)}
+        onExploreAbout={onExploreAbout}
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Sanskrit Inscription Banner */}
-        <div className="text-center mb-5">
+        {/* Top Bar: Sanskrit Inscription & Background Darshan Intensity Controls */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-amber-100 via-orange-100 to-amber-100 text-amber-950 border border-amber-300 px-4 py-1.5 rounded-full shadow-2xs">
-            <span className="text-sm font-semibold tracking-wide font-serif">
+            <span className="text-xs sm:text-sm font-semibold tracking-wide font-serif">
               ॐ श्री गणेशाय नमः • सियावर रामचंद्र की जय • ॐ नमो भगवते वासुदेवाय
             </span>
+          </div>
+
+          {/* Background Lord Ram Darshan Visibility Switch */}
+          <div className="inline-flex items-center gap-1.5 bg-white/90 backdrop-blur-xs border border-amber-300/80 px-2.5 py-1 rounded-full text-xs shadow-2xs">
+            <span className="text-[11px] font-bold text-amber-950 flex items-center gap-1">
+              <span>🏹 प्रभु श्री राम Background:</span>
+            </span>
+            <button
+              onClick={() => setBgIntensity('vivid')}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition ${
+                bgIntensity === 'vivid'
+                  ? 'bg-amber-800 text-white shadow-xs'
+                  : 'text-amber-900 hover:bg-amber-200/60'
+              }`}
+              title="High visibility Lord Ram background"
+            >
+              Vivid (40%)
+            </button>
+            <button
+              onClick={() => setBgIntensity('warm')}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition ${
+                bgIntensity === 'warm'
+                  ? 'bg-amber-800 text-white shadow-xs'
+                  : 'text-amber-900 hover:bg-amber-200/60'
+              }`}
+              title="Warm devotional backdrop"
+            >
+              Warm (25%)
+            </button>
+            <button
+              onClick={() => setBgIntensity('subtle')}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold transition ${
+                bgIntensity === 'subtle'
+                  ? 'bg-amber-800 text-white shadow-xs'
+                  : 'text-amber-900 hover:bg-amber-200/60'
+              }`}
+              title="Subtle backdrop"
+            >
+              Subtle (14%)
+            </button>
+
+            <button
+              onClick={() => setIsDarshanOpen(true)}
+              className="ml-1 bg-amber-700 hover:bg-amber-800 text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-2xs flex items-center gap-1 transition"
+              title="Open full high-resolution portrait of Bhagwan Shri Ram"
+            >
+              <span>👁️ Full Darshan</span>
+            </button>
           </div>
         </div>
 
@@ -263,6 +340,107 @@ export const Hero: React.FC<HeroProps> = ({
               >
                 {isDonationActive ? 'Custom Offer →' : 'Pledge Seva →'}
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Dedicated Bhagwan Shri Ram Darshan & Glories Showcase
+            Directly fulfills devotee expectation to behold Lord Ram's divine form,
+            virtues, and spiritual shelter prominently on the homepage */}
+        <div className="mt-8 bg-gradient-to-r from-amber-950 via-stone-900 to-amber-950 text-white rounded-3xl p-6 sm:p-8 border-2 border-amber-400/80 shadow-2xl relative overflow-hidden">
+          {/* Ambient golden halo in corner */}
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center relative z-10">
+            {/* Left Column: Authentic Portrait of Lord Ram */}
+            <div className="lg:col-span-4 flex flex-col items-center">
+              <div
+                onClick={() => setIsDarshanOpen(true)}
+                className="group relative cursor-pointer rounded-2xl overflow-hidden border-2 border-amber-400 shadow-xl bg-black w-full max-w-[280px] aspect-[3/4]"
+              >
+                <img
+                  src={RAM_PARIVAR_IMAGES.lordRam}
+                  alt="Bhagwan Maryada Purushottam Shri Ram"
+                  className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-transparent to-transparent opacity-80" />
+                <div className="absolute bottom-2 left-2 right-2 text-center bg-black/75 backdrop-blur-xs py-1.5 px-2 rounded-xl border border-amber-400/30">
+                  <span className="text-[11px] text-amber-300 font-bold flex items-center justify-center gap-1">
+                    <span>🔍 Click for Full Sacred Darshan</span>
+                  </span>
+                </div>
+              </div>
+              <span className="mt-2 text-xs text-amber-200/90 font-serif italic text-center">
+                मर्यादा पुरुषोत्तम भगवान श्री राम
+              </span>
+            </div>
+
+            {/* Right Column: Glories, 16 Virtues & Life */}
+            <div className="lg:col-span-8 space-y-3.5">
+              <div className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-300 border border-amber-400/30 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>The Presiding Deity • इष्टदेव प्रभु श्री राम</span>
+              </div>
+
+              <h3 className="text-2xl sm:text-3xl font-extrabold font-serif-title text-white tracking-tight">
+                Bhagwan Maryada Purushottam Shri Ram
+              </h3>
+
+              <p className="text-xs sm:text-sm text-stone-300 leading-relaxed">
+                The consecrated sanctuary of <strong>Shri Ram Janki Mandir</strong> is erected in supreme adoration of <strong>Bhagwan Shri Ram</strong>—the seventh avatar of Vishnu and the living ideal of Dharma, filial honor, and divine compassion. Holding the sacred Kodanda bow and arrow of truth, Prabhu Ram dispels all tribulations and bestows auspiciousness upon every devotee.
+              </p>
+
+              {/* Ram Dhun & Sacred Inscription */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="bg-stone-950/70 border border-amber-500/30 rounded-xl p-3">
+                  <div className="text-amber-300 font-bold font-serif mb-1">
+                    ॥ तारक मन्त्र (Taraka Mantra) ॥
+                  </div>
+                  <div className="text-stone-300 font-serif leading-relaxed">
+                    श्री राम जय राम जय जय राम ।
+                    <br />
+                    सियावर रामचंद्र की जय ॥
+                  </div>
+                </div>
+
+                <div className="bg-stone-950/70 border border-amber-500/30 rounded-xl p-3">
+                  <div className="text-amber-300 font-bold font-serif mb-1">
+                    ॥ रामो विग्रहवान् धर्मः ॥
+                  </div>
+                  <div className="text-stone-300 leading-relaxed">
+                    Rama is Dharma personified. Sincere prayer to Lord Ram dissolves fear, fosters familial harmony, and leads to liberation.
+                  </div>
+                </div>
+              </div>
+
+              {/* Action buttons */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <button
+                  onClick={() => setIsDarshanOpen(true)}
+                  className="px-4 py-2 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-1.5"
+                >
+                  <span>🌸</span>
+                  <span>Offer Virtual Pushpanjali</span>
+                </button>
+
+                {onExploreAbout && (
+                  <button
+                    onClick={onExploreAbout}
+                    className="px-4 py-2 bg-stone-800 hover:bg-stone-700 text-amber-200 hover:text-white border border-amber-400/40 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+                  >
+                    <span>Read Ramayana Katha &amp; Mandir History</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                )}
+
+                <button
+                  onClick={() => onDonateClick()}
+                  className="px-4 py-2 bg-amber-900/60 hover:bg-amber-900 text-amber-200 border border-amber-500/30 text-xs font-bold rounded-xl transition flex items-center gap-1.5"
+                >
+                  <Heart className="w-3.5 h-3.5 text-rose-400 fill-rose-400" />
+                  <span>Prabhu Ram Seva</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

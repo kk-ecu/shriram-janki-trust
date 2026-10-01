@@ -482,6 +482,12 @@ async function startServer() {
   });
 
   // ==========================================
+  // Static Public Assets Serving
+  // ==========================================
+  const publicPath = path.join(process.cwd(), 'public');
+  app.use(express.static(publicPath));
+
+  // ==========================================
   // Vite Middleware / Static Serving
   // ==========================================
   if (process.env.NODE_ENV !== 'production') {
