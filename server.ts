@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import fs from 'fs';
 import { createServer as createViteServer } from 'vite';
 import {
   INITIAL_CAMPAIGNS,
@@ -21,7 +22,7 @@ import {
   ContactInquiry,
 } from './src/types';
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Persistent In-Memory Database store with seamless JSON backup
 class TempleDatabase {
@@ -475,7 +476,7 @@ async function startServer() {
         platform: 'Hostinger VPS / Cloud Startup / Node.js Shared Hosting',
         dbRecommended: 'PostgreSQL or DuckDB (embedded zero-cost serverless)',
         gitopsWorkflow: '.github/workflows/deploy.yml',
-        port: 3000,
+        port: PORT,
         sslAuto: 'Hostinger Let’s Encrypt Free Wildcard SSL',
       },
     });
@@ -485,28 +486,42 @@ async function startServer() {
   // Static Public Assets Serving
   // ==========================================
   const publicPath = path.join(process.cwd(), 'public');
-  app.use(express.static(publicPath));
+  if (fs.existsSync(publicPath)) {
+    app.use(express.static(publicPath));
+  }
 
   // ==========================================
   // Vite Middleware / Static Serving
   // ==========================================
-  if (process.env.NODE_ENV !== 'production') {
+  const distPath = path.resolve(process.cwd(), 'dist');
+  const hasDist = fs.existsSync(path.join(distPath, 'index.html'));
+  const isDev = process.env.NODE_ENV === 'development';
+  const useStatic = process.env.NODE_ENV === 'production' || (hasDist && !isDev);
+
+  if (useStatic && hasDist) {
+    app.use(express.static(distPath));
+    app.get('*', (req: Request, res: Response) => {
+      res.sendFile(path.join(distPath, 'index.html'));
+    });
+  } else {
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
     });
     app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
-    app.use(express.static(distPath));
-    app.get('*', (req: Request, res: Response) => {
-      res.sendFile(path.join(distPath, 'index.html'));
-    });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🛕 Temple Server running on http://0.0.0.0:${PORT}`);
-  });
+  const portNum = Number(PORT);
+  if (isNaN(portNum)) {
+    // Phusion Passenger or Unix domain socket mode
+    app.listen(PORT, () => {
+      console.log(`🛕 Temple Server running on socket ${PORT}`);
+    });
+  } else {
+    app.listen(portNum, '0.0.0.0', () => {
+      console.log(`🛕 Temple Server running on http://0.0.0.0:${portNum}`);
+    });
+  }
 }
 
 startServer();
